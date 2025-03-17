@@ -1,20 +1,26 @@
+/* Base styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  background-color: #f9f9f9;
+  color: #333;
+  min-width: 450px; 
+  width: 450px;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-size: 14px;
-  background-color: #f9f9f9;
-  color: #333;
-}
-
 .container {
-  width: 380px;
-  min-height: 400px;
-  padding: 0;
+  width: 450px;
+  min-height: 450px;
+  max-height: 600px;
   display: flex;
   flex-direction: column;
 }
@@ -39,6 +45,47 @@ h1 {
   opacity: 0.9;
 }
 
+/* Tab Navigation */
+.tab-nav {
+  display: flex;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ddd;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  color: #666;
+  transition: all 0.2s;
+  border-bottom: 3px solid transparent;
+}
+
+.tab-button:hover {
+  background-color: #e0e0e0;
+}
+
+.tab-button.active {
+  color: #1E88E5;
+  border-bottom: 3px solid #1E88E5;
+  background-color: white;
+}
+
+/* Tab content styles */
+.tab-content {
+  overflow-y: auto;
+  max-height: 450px;
+  padding-bottom: 10px;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Search Form */
 .search-container {
   padding: 20px;
 }
@@ -95,15 +142,49 @@ input:focus {
   margin-right: 4px;
 }
 
-h2 {
-  font-size: 16px;
-  margin-bottom: 15px;
-  color: #333;
+/* Results section */
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 0 20px;
+  margin-bottom: 15px;
 }
 
-.hidden {
-  display: none;
+h2 {
+  font-size: 16px;
+  color: #333;
+}
+
+.sort-options {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.sort-options span {
+  font-size: 12px;
+  color: #666;
+}
+
+.sort-button {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sort-button:hover {
+  background-color: #f0f0f0;
+}
+
+.sort-button.active {
+  background-color: #e3f2fd;
+  border-color: #1E88E5;
+  color: #1E88E5;
 }
 
 #results {
@@ -123,6 +204,7 @@ h2 {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
   transition: all 0.2s;
   border-left: 3px solid transparent;
+  position: relative;
 }
 
 .ticket-option:hover {
@@ -175,6 +257,30 @@ h2 {
   border-left: 3px solid #2E7D32;
 }
 
+/* Track button */
+.track-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: #1E88E5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.track-button[data-tracked="true"] {
+  background-color: #EF5350;
+}
+
+.track-button:hover {
+  opacity: 0.9;
+}
+
+/* Loading spinner */
 .spinner {
   border: 3px solid rgba(30, 136, 229, 0.2);
   border-top: 3px solid #1E88E5;
@@ -196,6 +302,7 @@ h2 {
   100% { transform: rotate(360deg); }
 }
 
+/* Error message */
 #error {
   text-align: center;
   margin: 30px auto;
@@ -208,6 +315,244 @@ h2 {
 .error-icon {
   font-size: 24px;
   margin-bottom: 15px;
+}
+
+/* Tracked concerts tab */
+.tracked-header {
+  padding: 20px 20px 10px;
+}
+
+.tracker-desc {
+  color: #666;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+#tracked-events-container {
+  padding: 0 15px 20px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.no-tracked {
+  text-align: center;
+  color: #666;
+  padding: 30px 0;
+}
+
+/* Fix for tracked concerts table */
+.tracked-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  table-layout: fixed; /* This helps with column sizing */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.tracked-table th,
+.tracked-table td {
+  padding: 6px 4px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+  font-size: 11px;
+  word-wrap: break-word; /* Allow text to wrap */
+  vertical-align: middle;
+}
+
+/* Set specific widths for columns */
+.tracked-table th:nth-child(1), .tracked-table td:nth-child(1) { width: 20%; } /* Event */
+.tracked-table th:nth-child(2), .tracked-table td:nth-child(2) { width: 20%; } /* Venue */
+.tracked-table th:nth-child(3), .tracked-table td:nth-child(3) { width: 14%; } /* Date */
+.tracked-table th:nth-child(4), .tracked-table td:nth-child(4) { width: 12%; } /* Current Price */
+.tracked-table th:nth-child(5), .tracked-table td:nth-child(5) { width: 14%; } /* Price Change */
+.tracked-table th:nth-child(6), .tracked-table td:nth-child(6) { width: 20%; } /* Actions - increased width */
+
+.tracked-table th {
+  background-color: #f5f5f5;
+  font-weight: 500;
+  color: #555;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tracked-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Action buttons container */
+.action-buttons-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 2px;
+}
+
+/* Update action buttons for better spacing */
+.action-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 2px;
+  margin: 0;
+  font-size: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.view-btn {
+  color: #1E88E5;
+  border-color: #1E88E5;
+}
+
+.check-btn {
+  color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.untrack-btn {
+  color: #EF5350;
+  border-color: #EF5350;
+}
+
+.action-btn:hover {
+  opacity: 0.8;
+}
+
+/* Make the concert name and venue clearly truncated when needed */
+.tracked-table td:first-child,
+.tracked-table td:nth-child(2) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Price change indicators */
+.price-up, 
+.price-down, 
+.price-same {
+  white-space: nowrap;
+  display: block;
+  font-size: 11px;
+}
+
+.price-up {
+  color: #EF5350;
+}
+
+.price-down {
+  color: #4CAF50;
+}
+
+.price-same {
+  color: #9E9E9E;
+}
+
+/* Price history modal */
+.price-history-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-header h3 {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-body h4 {
+  margin-bottom: 15px;
+  color: #555;
+}
+
+.price-chart {
+  height: 200px;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #888;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.history-table th {
+  font-weight: 500;
+  color: #555;
+}
+
+/* Notification */
+.notification {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #323232;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+/* Tooltip for long text */
+[title] {
+  position: relative;
+  cursor: pointer;
 }
 
 .footer {

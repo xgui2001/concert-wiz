@@ -51,19 +51,38 @@ export async function searchTicketmaster(artist, date, location, apiKey) {
       }
     }
     
-    // Add date filtering if provided - with improved handling
+    // FIXED DATE HANDLING
     if (date && date.trim() !== '') {
-      // Format the start date for the API - start at beginning of the day
-      const startDate = new Date(date);
-      startDate.setHours(0, 0, 0, 0);
-      
-      // For specific date searches, only search for events on that exact date
-      // by setting endDateTime to the end of the same day
-      const endDate = new Date(startDate);
-      endDate.setHours(23, 59, 59, 999);
-      
-      url += `&startDateTime=${startDate.toISOString().split('.')[0]}Z`;
-      url += `&endDateTime=${endDate.toISOString().split('.')[0]}Z`;
+      try {
+        // Parse the input date string - ensure it's in YYYY-MM-DD format
+        let dateStr = date.trim();
+        
+        // Create a date object - this will handle different input formats
+        const dateObj = new Date(dateStr);
+        
+        // Validate that we have a proper date
+        if (!isNaN(dateObj.getTime())) {
+          // Format to YYYY-MM-DD for consistency
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          
+          // Create properly formatted date strings for API
+          // The API requires ISO8601 format
+          const startDateStr = `${year}-${month}-${day}T00:00:00Z`;  
+          const endDateStr = `${year}-${month}-${day}T23:59:59Z`;
+          
+          url += `&startDateTime=${encodeURIComponent(startDateStr)}`;
+          url += `&endDateTime=${encodeURIComponent(endDateStr)}`;
+          
+          console.log(`Searching for events between ${startDateStr} and ${endDateStr}`);
+        } else {
+          console.warn(`Invalid date format provided: ${date}`);
+        }
+      } catch (error) {
+        console.error('Error processing date:', error);
+        // Continue without date filter if there's an error
+      }
     }
     
     // Add sorting by date
@@ -116,21 +135,47 @@ export async function searchTicketmaster(artist, date, location, apiKey) {
         price = event.priceRanges[0].min;
       }
       
+      // Extract coordinates for venue if available (for location-based sorting)
+      let coordinates = null;
+      if (venueData?.location) {
+        coordinates = {
+          lat: parseFloat(venueData.location.latitude),
+          lng: parseFloat(venueData.location.longitude)
+        };
+      }
+      
       // Extract date and time information with better formatting
-      let eventDate = '';
-      let displayDate = '';
+      let rawDate = '';
+      let displayDate = 'Date TBA';
+      
       if (event.dates?.start?.localDate) {
-        eventDate = event.dates.start.localDate;
+        // Store raw date for sorting and filtering
+        rawDate = event.dates.start.localDate;
         
-        // Create a formatted date for display
-        const dateObj = new Date(event.dates.start.localDate);
-        const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-        displayDate = dateObj.toLocaleDateString('en-US', options);
-        
-        // Add time if available
-        if (event.dates.start.localTime) {
-          const timeObj = new Date(`${event.dates.start.localDate}T${event.dates.start.localTime}`);
-          displayDate += ` at ${timeObj.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}`;
+        try {
+          // Create a properly formatted date object
+          const dateObj = new Date(rawDate);
+          
+          if (!isNaN(dateObj.getTime())) {
+            // Format date in a user-friendly way
+            const options = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+            displayDate = dateObj.toLocaleDateString('en-US', options);
+            
+            // Add time if available
+            if (event.dates.start.localTime) {
+              try {
+                const timeObj = new Date(`${rawDate}T${event.dates.start.localTime}`);
+                if (!isNaN(timeObj.getTime())) {
+                  displayDate += ` at ${timeObj.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit'})}`;
+                }
+              } catch (timeError) {
+                console.warn('Error formatting time:', timeError);
+              }
+            }
+          }
+        } catch (dateError) {
+          console.warn('Error formatting date:', dateError);
+          displayDate = rawDate; // Fallback to raw date
         }
       }
       
@@ -138,12 +183,13 @@ export async function searchTicketmaster(artist, date, location, apiKey) {
         platform: 'Ticketmaster',
         price: price !== null ? price : 'Check site',
         venue: venueLocation,
-        date: displayDate || eventDate || 'Date TBA',
-        rawDate: eventDate, // Keep the raw date for sorting
+        date: displayDate,
+        rawDate: rawDate, // Keep the raw date for sorting
         url: event.url,
         // Include additional information that might be useful
         name: event.name,
         id: event.id,
+        coordinates: coordinates,
         imageUrl: event.images && event.images.length > 0 ? event.images[0].url : null
       };
     });

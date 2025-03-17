@@ -9,49 +9,78 @@
   <div class="container">
     <div class="header">
       <h1>Concert Ticket Tracker</h1>
-      <p class="subtitle">Find the best ticket prices across platforms</p>
+      <p class="subtitle">Find & track ticket prices across platforms</p>
     </div>
     
-    <div class="search-container">
-      <form id="search-form">
-        <div class="form-group">
-          <label for="artist">Artist/Event Name:</label>
-          <input type="text" id="artist" placeholder="e.g., Taylor Swift, Coldplay" required>
+    <!-- Tab Navigation -->
+    <div class="tab-nav">
+      <button class="tab-button active" data-tab="search-tab">Search</button>
+      <button class="tab-button" data-tab="tracked-tab">Tracked Concerts</button>
+    </div>
+    
+    <!-- Search Tab -->
+    <div id="search-tab" class="tab-content">
+      <div class="search-container">
+        <form id="search-form">
+          <div class="form-group">
+            <label for="artist">Artist/Event Name:</label>
+            <input type="text" id="artist" placeholder="e.g., Taylor Swift, Coldplay" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="date">Date (optional):</label>
+            <input type="date" id="date">
+          </div>
+          
+          <div class="form-group">
+            <label for="location">Location (optional):</label>
+            <input type="text" id="location" placeholder="e.g., New York, Madison Square Garden">
+          </div>
+          
+          <button type="submit" class="search-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            Find Tickets
+          </button>
+        </form>
+      </div>
+      
+      <div id="loading" class="hidden">
+        <div class="spinner"></div>
+        <p>Searching for the best tickets...</p>
+      </div>
+      
+      <div id="results" class="hidden">
+        <div class="results-header">
+          <h2>Best Ticket Prices</h2>
+          <div id="sort-options" class="sort-options hidden">
+            <span>Sort by:</span>
+            <button id="sort-price" class="sort-button active">Price</button>
+            <button id="sort-date" class="sort-button">Date</button>
+            <button id="sort-location" class="sort-button">Location</button>
+          </div>
         </div>
-        
-        <div class="form-group">
-          <label for="date">Date (optional):</label>
-          <input type="date" id="date">
-        </div>
-        
-        <div class="form-group">
-          <label for="location">Location (optional):</label>
-          <input type="text" id="location" placeholder="e.g., New York, Madison Square Garden">
-        </div>
-        
-        <button type="submit" class="search-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          Find Tickets
-        </button>
-      </form>
+        <div id="tickets-container"></div>
+      </div>
+      
+      <div id="error" class="hidden">
+        <div class="error-icon">❌</div>
+        <p>Sorry, we couldn't find any tickets for this search. Please try different search terms.</p>
+      </div>
     </div>
     
-    <div id="loading" class="hidden">
-      <div class="spinner"></div>
-      <p>Searching for the best tickets...</p>
-    </div>
-    
-    <div id="results" class="hidden">
-      <h2>Best Ticket Prices</h2>
-      <div id="tickets-container"></div>
-    </div>
-    
-    <div id="error" class="hidden">
-      <div class="error-icon">❌</div>
-      <p>Sorry, we couldn't find any tickets for this search. Please try different search terms.</p>
+    <!-- Tracked Concerts Tab -->
+    <div id="tracked-tab" class="tab-content hidden">
+      <div class="tracked-header">
+        <h2>Tracked Concerts</h2>
+        <p class="tracker-desc">Monitor price changes for your favorite concerts over time</p>
+      </div>
+      
+      <div id="tracked-events-container">
+        <p class="no-tracked">No concerts are currently being tracked. Search for concerts and click "Track Prices" to monitor them.</p>
+      </div>
     </div>
     
     <div class="footer">
